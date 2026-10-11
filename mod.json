@@ -87,6 +87,24 @@
       "description": "Fixes levels with multiple songs (and sfx) showing 0.0B size.",
       "default": true
     },
+    "random-title": {
+      "name": "Random song",
+      "type": "title"
+    },
+    "random-song-enabled": {
+      "name": "Randomize song",
+      "type": "bool",
+      "description": "Every N attempts, randomly switches the active song of the level to another downloaded one (the default song is included). Not counted in practice mode.",
+      "default": false
+    },
+    "random-song-attempts": {
+      "name": "Attempts per switch",
+      "type": "int",
+      "description": "After how many attempts the song is switched",
+      "default": 5,
+      "min": 1,
+      "max": 1000
+    },
     "experimental-title": {
       "name": "Experimental",
       "type": "title",
