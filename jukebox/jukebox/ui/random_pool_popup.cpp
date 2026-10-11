@@ -143,7 +143,7 @@ void RandomPoolPopup::createList() {
 }
 
 void RandomPoolPopup::onToggle(CCObject* sender) {
-    const auto* toggler = static_cast<CCMenuItemToggler*>(sender);
+    auto* toggler = static_cast<CCMenuItemToggler*>(sender);
     const int idx = toggler->getTag();
     if (idx < 0 || idx >= static_cast<int>(m_entries.size())) {
         return;
