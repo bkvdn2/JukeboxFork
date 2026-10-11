@@ -11,6 +11,7 @@
 #include <Geode/cocos/sprite_nodes/CCSprite.h>
 #include <ccTypes.h>
 #include <fmt/core.h>
+#include <Geode/binding/ButtonSprite.hpp>
 #include <Geode/binding/CCMenuItemSpriteExtra.hpp>
 #include <Geode/binding/CustomSongWidget.hpp>
 #include <Geode/binding/FLAlertLayer.hpp>
@@ -31,6 +32,7 @@
 #include <jukebox/nong/nong.hpp>
 #include <jukebox/ui/list/nong_list.hpp>
 #include <jukebox/ui/nong_add_popup.hpp>
+#include <jukebox/ui/random_pool_popup.hpp>
 
 using namespace geode::prelude;
 
@@ -75,13 +77,15 @@ bool NongDropdownLayer::init(float width, float height, std::vector<int> ids, Cu
     spr = CCSprite::createWithSpriteFrameName("GJ_deleteIcon_001.png");
     m_deleteBtn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(NongDropdownLayer::deleteAllNongs));
 
-    if (isMultiple) {
-        m_addBtn->setVisible(false);
-        m_deleteBtn->setVisible(false);
-    } else {
-        m_addBtn->setVisible(true);
-        m_deleteBtn->setVisible(true);
-    }
+    ButtonSprite* poolSpr = ButtonSprite::create("Rnd", "goldFont.fnt", "GJ_button_04.png", 0.6f);
+    poolSpr->setScale(0.6f);
+    m_poolBtn = CCMenuItemSpriteExtra::create(poolSpr, this, menu_selector(NongDropdownLayer::openPoolPopup));
+    m_poolBtn->setID("random-pool-button");
+
+    m_addBtn->setVisible(!isMultiple);
+    m_deleteBtn->setVisible(!isMultiple);
+    m_poolBtn->setVisible(!isMultiple);
+    m_bottomRightMenu->addChild(m_poolBtn);
     m_bottomRightMenu->addChild(m_addBtn);
     m_bottomRightMenu->addChild(m_discordBtn);
     m_bottomRightMenu->addChild(m_deleteBtn);
@@ -189,6 +193,13 @@ void NongDropdownLayer::openAddPopup(CCObject* target) {
     NongAddPopup::create(m_currentSongID.value())->show();
 }
 
+void NongDropdownLayer::openPoolPopup(CCObject*) {
+    if (!m_currentSongID.has_value()) {
+        return;
+    }
+    RandomPoolPopup::create(m_currentSongID.value())->show();
+}
+
 void NongDropdownLayer::createList() {
     if (!m_list) {
         m_list = NongList::create(m_songIDS, CCSize{this->getCellSize().width, 220.f}, m_levelID,
@@ -198,10 +209,12 @@ void NongDropdownLayer::createList() {
                                       if (multiple) {
                                           m_addBtn->setVisible(false);
                                           m_deleteBtn->setVisible(false);
+                                          m_poolBtn->setVisible(false);
                                           m_bottomRightMenu->updateLayout();
                                       } else {
                                           m_addBtn->setVisible(true);
                                           m_deleteBtn->setVisible(true);
+                                          m_poolBtn->setVisible(true);
                                           m_bottomRightMenu->updateLayout();
                                       }
                                   });

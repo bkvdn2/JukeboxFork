@@ -29,6 +29,7 @@ protected:
     CCMenuItemSpriteExtra* m_addBtn = nullptr;
     CCMenuItemSpriteExtra* m_discordBtn = nullptr;
     CCMenuItemSpriteExtra* m_deleteBtn = nullptr;
+    CCMenuItemSpriteExtra* m_poolBtn = nullptr;
     cocos2d::CCMenu* m_bottomRightMenu = nullptr;
 
     geode::ListenerHandle m_songErrorListener;
@@ -45,6 +46,7 @@ protected:
     void fetchSongFileHub(cocos2d::CCObject*);
     void onSettings(cocos2d::CCObject*);
     void openAddPopup(cocos2d::CCObject*);
+    void openPoolPopup(cocos2d::CCObject*);
 
 public:
     void onSelectSong(int songID);

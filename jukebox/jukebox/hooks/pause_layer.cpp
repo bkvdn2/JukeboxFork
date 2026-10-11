@@ -1,8 +1,9 @@
 #include <Geode/binding/CCMenuItemSpriteExtra.hpp>
 #include <Geode/binding/FLAlertLayer.hpp>
-#include <Geode/binding/PlayLayer.hpp>
 #include <Geode/binding/PauseLayer.hpp>
+#include <Geode/binding/PlayLayer.hpp>
 #include <Geode/loader/Log.hpp>
+#include <Geode/loader/Loader.hpp>
 #include <Geode/modify/PauseLayer.hpp>  // IWYU pragma: keep
 #include <Geode/ui/Layout.hpp>
 
@@ -22,18 +23,33 @@ class $modify(JBPauseLayer, PauseLayer) {
             return;
         }
 
+        // Node IDs are assigned by a hook that finishes after this one, so wait a frame for "left-button-menu"
+        Loader::get()->queueInMainThread([self = Ref(this)] { static_cast<JBPauseLayer*>(self.data())->addJukeboxButton(); });
+    }
+
+    void addJukeboxButton() {
+        if (this->getChildByID("nong-menu"_spr) || (this->getChildByID("nong-button"_spr))) {
+            return;
+        }
+
         CCSprite* spr = CCSprite::createWithSpriteFrameName("JB_PinDisc.png"_spr);
         spr->setScale(0.7f);
         CCMenuItemSpriteExtra* btn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(JBPauseLayer::onJukebox));
         btn->setID("nong-button"_spr);
+
+        // The left side of the pause screen is empty, the options button lives on the right
+        if (CCNode* leftMenu = this->getChildByID("left-button-menu")) {
+            leftMenu->addChild(btn);
+            leftMenu->updateLayout();
+            return;
+        }
 
         CCMenu* menu = CCMenu::create();
         menu->setID("nong-menu"_spr);
         menu->addChild(btn);
         btn->setPosition({0.f, 0.f});
         const CCSize winSize = CCDirector::get()->getWinSize();
-        // top right corner, clear of the pause menu buttons
-        menu->setPosition({winSize.width - 30.f, winSize.height - 30.f});
+        menu->setPosition({36.f, winSize.height - 36.f});
         this->addChild(menu, 10);
     }
 
@@ -64,9 +80,5 @@ class $modify(JBPauseLayer, PauseLayer) {
         }
         layer->setZOrder(106);
         layer->show();
-
-        FLAlertLayer::create("Jukebox",
-                             "The new song will be used after the next <cy>restart</c> of the level.", "Ok")
-            ->show();
     }
 };
