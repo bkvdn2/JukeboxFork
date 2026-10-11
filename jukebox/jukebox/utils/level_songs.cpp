@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <Geode/utils/general.hpp>
 #include <Geode/utils/string.hpp>
 
 namespace jukebox {
